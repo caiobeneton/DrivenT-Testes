@@ -1,4 +1,4 @@
-import { notFoundError } from "@/errors";
+import { notFoundError, requestError } from "@/errors";
 import enrollmentRepository from "@/repositories/enrollment-repository";
 import hotelsRepository from "@/repositories/hotels-repository";
 import ticketRepository from "@/repositories/ticket-repository";
@@ -12,8 +12,12 @@ async function checkEnrollment(userId: number) {
 
   const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
 
-  if (!ticket || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote || ticket.status !== "PAID") {
+  if (!ticket) {
     throw notFoundError();
+  }
+
+  if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || ticket.status !== "PAID") {
+    throw requestError(402, "Payment required");
   }
 }
 

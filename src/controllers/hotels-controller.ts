@@ -14,6 +14,10 @@ export async function getHotels(req: AuthenticatedRequest, res: Response) {
       return res.status(httpStatus.NOT_FOUND).send(error.message);
     }
 
+    if (error.status === 402) {
+      return res.status(httpStatus.PAYMENT_REQUIRED).send(error.message);
+    }
+
     return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
@@ -28,6 +32,10 @@ export async function getHotelRooms(req: AuthenticatedRequest, res: Response) {
   } catch (error) {
     if (error.name === "NotFoundError") {
       return res.status(httpStatus.NOT_FOUND).send(error.message);
+    }
+
+    if (error.status === 402) {
+      return res.status(httpStatus.PAYMENT_REQUIRED).send(error.message);
     }
 
     return res.sendStatus(httpStatus.BAD_REQUEST);
